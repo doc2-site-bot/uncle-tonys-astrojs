@@ -1,0 +1,13 @@
+{
+  "functions": [
+    {
+      "function": "entry",
+      "path": "/404"
+    },
+    {
+      "function": "entry",
+      "pattern": "^(?:/(.*?))?/?$"
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,58 @@
+---
+import '../styles/globals.css';
+import Header from '../components/Header';
+import Main from '../components/Main';
+import Footer from '../components/Footer';
+import { select } from 'hast-util-select';
+import { resolveReferences } from '../utils';
+
+const project = '1yAR0vQ6Di6va7X4Rtd-004iajFdNSH_v';
+
+const workspace = import.meta.env.PROD ? 'live' : 'preview';
+
+const { pathname } = Astro.url;
+
+const reqDoc = await fetch(`https://api.doc2.site/v1/docs/${workspace}/${project}?path=${pathname}`);
+
+if (!reqDoc.ok) {
+  return Astro.redirect('/404');
+}
+
+const doc: Document = await reqDoc.json();
+
+const { meta, hast, components, references } = doc;
+
+const refs = references ? await resolveReferences(references) : undefined;
+
+let header, footer;
+if (refs) {
+  const [headerDocument, footerDocument] = ['header', 'footer'].map((name) => {
+  const element = select(name, hast);
+
+  if (element?.properties?.reference) {
+    return refs[String(element.properties.reference)];
+  }
+
+    return null;
+  });
+
+  header = headerDocument;
+  footer = footerDocument;
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={meta?.description} />
+    <link rel="icon" type="image/png" href="/favicon.svg" />
+    <title>{meta?.title}</title>
+  </head>
+  <body>
+    <Header hast={header?.hast} />
+    <Main hast={hast} refs={refs} components={components} path={pathname}  />
+    <Footer hast={footer?.hast} />
+  </body>
+</html>
