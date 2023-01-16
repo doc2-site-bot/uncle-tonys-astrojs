@@ -39,6 +39,8 @@ if (refs) {
   header = headerDocument;
   footer = footerDocument;
 }
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
 ---
 
 <!DOCTYPE html>
