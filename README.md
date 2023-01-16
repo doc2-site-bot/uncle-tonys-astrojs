@@ -6,7 +6,7 @@ Uncle Tony's is a fictitious restaurant in San Francisco.
 
 ## Live demo
 
-
+https://uncle-tonys-astrojs.netlify.app/
 
 ## Content source
 
