@@ -23,7 +23,13 @@ function MenuItem({
   );
 }
 
-function Menu({ hast, refs }: { hast: Element; refs: Reference | undefined }) {
+function Menu({
+  hast,
+  refs,
+}: {
+  hast: Element;
+  refs: ResolvedReference | undefined;
+}) {
   if (!refs) {
     return null;
   }

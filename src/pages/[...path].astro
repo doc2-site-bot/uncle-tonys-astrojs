@@ -4,15 +4,21 @@ import Header from '../components/Header';
 import Main from '../components/Main';
 import Footer from '../components/Footer';
 import { select } from 'hast-util-select';
-import { resolveReferences } from '../utils';
+import { resolveReferences, getWorkspace, getFetchOptions } from '../utils';
 
 const project = '1yAR0vQ6Di6va7X4Rtd-004iajFdNSH_v';
 
-const workspace = import.meta.env.PROD ? 'live' : 'preview';
+const workspace = getWorkspace();
 
 const { pathname } = Astro.url;
 
-const reqDoc = await fetch(`https://api.doc2.site/v1/docs/${workspace}/${project}?path=${pathname}`);
+// Ignore fragments
+if (pathname.startsWith('/fragments/')) {
+  return Astro.redirect('/404');
+}
+
+// Fetch page props
+const reqDoc = await fetch(`https://api.doc2.site/v1/docs/${workspace}/${project}?path=${pathname}`, getFetchOptions(workspace));
 
 if (!reqDoc.ok) {
   return Astro.redirect('/404');
@@ -22,8 +28,9 @@ const doc: Document = await reqDoc.json();
 
 const { meta, hast, components, references } = doc;
 
-const refs = references ? await resolveReferences(references) : undefined;
+const refs = references ? await resolveReferences(references, workspace) : undefined;
 
+// Query header and footer
 let header, footer;
 if (refs) {
   const [headerDocument, footerDocument] = ['header', 'footer'].map((name) => {
@@ -39,8 +46,6 @@ if (refs) {
   header = headerDocument;
   footer = footerDocument;
 }
-
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
 ---
 
 <!DOCTYPE html>

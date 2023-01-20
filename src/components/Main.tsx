@@ -8,7 +8,7 @@ import type { Root, Element } from "hast";
 type RenderParams = {
   meta?: { [key: string]: string };
   hast?: Root;
-  refs?: Reference;
+  refs?: ResolvedReference;
   components?: string[];
   key?: string;
   path: string;
