@@ -16,10 +16,10 @@ function Hero({ hast }: { hast: Element }) {
             return (
               <img
                 key={index}
-                src={properties.src}
+                src={properties.src.replace(".default.", ".600.")}
                 loading="eager"
                 alt={properties.alt}
-                class="object-cover"
+                class="object-cover w-full"
               />
             );
           }
